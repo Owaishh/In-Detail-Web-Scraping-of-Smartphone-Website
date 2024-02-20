@@ -1,0 +1,258 @@
+import os
+import datetime
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from time import sleep
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
+import timeit
+import time
+
+driver=webdriver.Firefox()
+
+driver2=webdriver.Firefox()
+
+driver.get('https://www.91mobiles.com/phonefinder.php')
+
+ab = "https://www.91mobiles.com/phonefinder.php"
+ac = "https://www.91mobiles.com/"
+am = "S"
+
+
+Time = []
+Name = []
+Name0 = []
+Name1 = []
+Cate = []
+NameT = []
+Cate1 = []
+Price = []
+Specs = []
+
+x = [[] for i in range(14000)]
+
+o = 1
+
+my_list = list(range(1, 13323))
+
+for m in range(len(my_list)):
+    
+    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+
+    
+    sleep(2)
+    
+
+    # find_elements() to get all elements consist of href links
+    lnk1 = driver.find_elements(By.CSS_SELECTOR, 'span.blue.target_link_new_tab.gaclick')
+    for lnk in lnk1:
+        # get_attribute() to get all href
+        Name0.append(lnk.get_attribute('data-href-url'))
+
+
+
+
+    # find the launch time ie new, old , discontinued etc
+    if len(driver.find_elements(By.XPATH, "//div[@class='filter-left filter_left']"))>0:
+        lnk2 = driver.find_elements(By.XPATH, "//div[@class='filter-left filter_left']")
+        for p in range(len(lnk2)):
+            Cate.append(lnk2[p].text)
+            Cate1.append(lnk2[p].text)
+    Cate = [l if l != '' else 'no category found' for l in Cate]
+
+    
+        
+        
+
+    
+    # find the Names of all the smartphone
+    lnk3 = driver.find_elements(By.XPATH, "//a[@class='hover_blue_link name gaclick']")
+    for p in range(len(lnk3)):
+        Name.append(lnk3[p].text)
+        NameT.append(lnk3[p].text)
+
+    
+    #scraping price from the main page
+    lnkj = driver.find_elements(By.XPATH, "//div[@class='filter-right']")
+    for p in range(len(lnkj)):
+        Price.append(lnkj[p].text)
+
+    
+    # delete all elements which don't help in link build up
+    del Name0[0::2]
+
+    for i in range(len(Name0)):
+        Name1.append(ac+Name0[i])
+
+    start = time.time()
+
+    
+        
+    for j in range(len(Name1)):
+        url = Name1[j]
+        # sleep(1)
+
+        
+        driver2.get(url)
+        
+        sleep(2)
+
+        k = Price[j]
+        l = Name[j]
+        h = Cate[j]
+
+        
+
+        
+
+        Specs.append(l)
+        Specs.append(h)
+        Specs.append(k)
+        
+
+    
+        Specs.append(am+str(j))
+        # below code will scrape SCORE of smartphone
+        if len(driver2.find_elements(By.XPATH, "//div[@class='spec_rvw_pnl']//div[1]//div//div")) > 0:
+            lnk4 = driver2.find_elements(By.XPATH, "//div[@class='spec_rvw_pnl']//div[1]//div//div")
+            for p in range(len(lnk4)):
+                Specs.append(lnk4[p].text)
+          
+        else:
+            Specs.append("no score available")
+        Specs.append(am+str(j))
+
+        
+        Specs.append(am+str(j)+str(j))
+        #below code will scrape android version
+        if len(driver2.find_elements(By.XPATH, "//div[@class='for_list_li']")) > 0:
+            lnk4i = driver2.find_elements(By.XPATH, "//div[@class='for_list_li']")
+            for p in range(len(lnk4i)):
+                Specs.append(lnk4i[p].text)
+        
+                
+        else:
+            Specs.append("no android version available")
+
+        Specs.append(am+str(j)+str(j))
+
+        
+
+        
+        Specs.append(am+str(j)+str(j)+str(j))
+        # below code will scrape summary of key specs.
+        if len(driver2.find_elements(By.XPATH, "//table[@class='specsTable']/tbody/tr/td")) > 0:
+            lnk5 = driver2.find_elements(By.XPATH, "//table[@class='specsTable']/tbody/tr/td")
+            for p in range(len(lnk5)):
+                Specs.append(lnk5[p].text)
+        
+                
+        else:
+            Specs.append("no key specs available")
+        Specs.append(am+str(j)+str(j)+str(j))
+
+        
+        Specs.append(am+str(j)+str(j)+str(j)+"P")
+        # find the Price of all the smartphone
+
+        
+        lnkj = driver.find_elements(By.XPATH, "//div[@class='price_div']//span")
+        for p in range(len(lnkj)):
+            Price.append(lnkj[p].text)
+            Specs.append(lnkj[p].text)
+
+        Specs.append(am+str(j)+str(j)+str(j)+"P")
+
+        
+
+
+        Specs.append(am+str(j)+str(j)+str(j)+str(j))
+        # below code will scrape manufacturer name
+        if len(driver2.find_elements(By.XPATH, "//label[@class='label_hd']")) > 0:
+            lnk6 = driver2.find_elements(By.XPATH, "//label[@class='label_hd']")
+            for p in range(len(lnk6)):
+                Specs.append(lnk6[p].text)
+        
+                
+        else:
+            Specs.append("no manufacturere name available")
+        Specs.append(am+str(j)+str(j)+str(j)+str(j))
+
+
+        Specs.append(am+str(j)+str(j)+str(j)+str(j)+str(j))
+        #this below code will scrape manufacturer website
+
+        try:
+            if len(str(driver2.find_element(By.CSS_SELECTOR, "span.toplinks.target_link_external")))>0:
+                lnk8 = driver2.find_element(By.CSS_SELECTOR, "span.toplinks.target_link_external")
+                lnk81 = lnk8.get_attribute('data-href-url')
+                Specs.append(lnk81)
+        
+                
+            else:
+                Specs.append("no data available available")
+
+        except:
+            Specs.append("no data available available")
+            
+        Specs.append(am+str(j)+str(j)+str(j)+str(j)+str(j))
+
+
+        Specs.append(am+str(j)+str(j)+str(j)+str(j)+str(j)+str(j))
+        # below code will scrape detailed description of phone
+        try:
+
+            #this text will specs descriptions Headings
+            lnk9 = driver2.find_elements(By.XPATH, "//table[@class='spec_table']/tbody/tr/td[1]")
+            sleep(1)
+            for p in range(len(lnk9)):
+                Specs.append(lnk9[p].text)
+
+            
+
+
+            #this text will specs descriptions
+            lnk10 = driver2.find_elements(By.XPATH, "//table[@class='spec_table']/tbody/tr/td[2]")
+            sleep(1)
+            for p in range(len(lnk10)):
+                Specs.append(lnk10[p].text)
+
+        except: 
+            Specs.append("no description available")
+        Specs.append(am+str(j)+str(j)+str(j)+str(j)+str(j)+str(j)+"k")
+
+        x[o] = Specs
+        o = o+1
+        Specs = []
+
+        
+        
+
+        
+    end = time.time()
+    Time.append(str(end - start))
+        
+        
+
+        
+        
+        
+    # x[m] = Specs
+
+    
+    Name0 = []
+    Name1 = []
+    Name = []
+    Cate = []
+    
+
+    lnk13 = driver.find_element(By.XPATH, "//div[@class='listing-btns4']")
+    lnk13.click()
+
+
+
+    
+    
+    sleep(3)
+
